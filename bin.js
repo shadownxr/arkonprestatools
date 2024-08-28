@@ -31,7 +31,7 @@ async function createModule(){
         requiresArg: false,
       }
     })
-  }).argv;
+  }).showHelpOnFail(true).demandCommand().strict().argv;
 
   const options = parseCommandOption(argv);
 
