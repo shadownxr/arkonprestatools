@@ -34,8 +34,8 @@ class {{ moduleName_pascalcase }} extends Module
 
         parent::__construct();
 
-        $this->displayName = $this->l('Custom content blocks');
-        $this->description = $this->l('Module allows to add custom blocks to every front-office hook');
+        $this->displayName = $this->l('{{ display_name }}');
+        $this->description = $this->l('{{ description }}');
 
         $this->confirmUninstall = $this->l('Are you sure? All data will be lost!');
 
