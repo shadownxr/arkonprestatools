@@ -41,18 +41,21 @@ async function createModule(){
       name: 'name',
       message: 'Enter the name of the module (use snake_case or camelCase)',
       initial: 'module_name',
+      validate: name => name.match(/^[a-z]+(_[a-z]+)*$/i) ? true : 'Please enter a valid module name (use snake_case or camelCase)',
     },
     'display_name': {
       type: 'text',
       name: 'display_name',
       message: 'Enter a display name for the module',
       initial: 'Arkon Module',
+      validate: display_name => display_name.length > 0 ? true : 'Please enter a display name',
     },
     'description': {
       type: 'text',
       name: 'description',
       message: 'Enter a description for the module',
       initial: 'This is an arkon module',
+      validate: description => description.length > 0 ? true : 'Please enter a description',
     },
   };
 
@@ -72,10 +75,7 @@ async function createModule(){
 
   const binPath = __dirname + '/module/';
   const path = __dirname + '/' + moduleName + '/';
-  writeFiles(path, binPath, moduleName, [display_name, description]);
-
-  console.log(`Module ${moduleName} created\n`);
-  console.log('Remember to run "Composer install" and "NPM install" in the module folder!');
+  writeFiles(path, binPath, moduleName, {"display_name": display_name, "description": description});
 }
 
 function parseCommandOption(argv){
@@ -134,11 +134,10 @@ function createFolder(path){
 }
 
 function writeFiles(path, binPath, moduleName, additionalOptions){
-  fs.readdirSync(binPath).forEach(file => {
+  fs.readdirSync(binPath).forEach((file) => {
     if(fs.lstatSync(binPath + file).isDirectory()){
-      // console.log('Creating folder ' + path + file)
       createFolder(path + file);
-      writeFiles(path + file + '/', binPath + file + '/', moduleName);
+      writeFiles(path + file + '/', binPath + file + '/', moduleName, additionalOptions);
     } else {
       fs.readFile(binPath + file, 'utf8', (err, data) => {
         if (err) {
@@ -149,15 +148,12 @@ function writeFiles(path, binPath, moduleName, additionalOptions){
         data = data.replace(/{{ moduleName_lowercase }}/g, moduleName.toLowerCase());
         data = data.replace(/{{ moduleName_pascalcase }}/g, moduleName.charAt(0).toUpperCase() + moduleName.slice(1));
         data = data.replace(/{{ currentYear }}/g, new Date().getFullYear());
-
-        // additionalOptions.forEach((option, index) => {
-        //   data = data.replace(new RegExp('{{ ' + option + ' }}', 'g'), option);
-        // });
+        data = data.replace(/{{ display_name }}/g, additionalOptions.display_name);
+        data = data.replace(/{{ description }}/g, additionalOptions.description);
 
         fs.writeFile(path + file.replace(/\.p/, '.').replace(/module/, moduleName.toLowerCase()), data, { flag: 'a' }, (err) => {
           if (err) {
             console.error(err);
-            return;
           }
           // console.log('File ' + file.replace(/\.p/, '.') + ' created');
         });
@@ -166,6 +162,9 @@ function writeFiles(path, binPath, moduleName, additionalOptions){
   });
 }
 
-createModule().catch((e) => {
+createModule().then(() => {
+  console.log(`Module created\n`);
+  console.log('Remember to run "Composer install" and "NPM install" in the module folder!');
+}).catch((e) => {
   console.error(e);
 });
