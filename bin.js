@@ -74,7 +74,7 @@ async function createModule(){
   createModuleFolder(moduleName);
 
   const binPath = __dirname + '/module/';
-  const path = __dirname + '/' + moduleName + '/';
+  const path = './' + moduleName + '/';
   writeFiles(path, binPath, moduleName, {"display_name": display_name, "description": description});
 }
 
