@@ -61,8 +61,17 @@ async function createModule(){
 
   questions = removeFilledQuestions(questions, options);
 
-  const promptOptions = await prompts(Object.values(questions));
-  Object.assign(options, promptOptions);
+  try {
+    const promptOptions = await prompts(Object.values(questions), {
+      onCancel: () => {
+        throw new Error('✖' + ` Cancelled`)
+      }
+    });
+    Object.assign(options, promptOptions);
+  } catch (cancelled) {
+    console.log(cancelled.message)
+    process.exit(1)
+  }
 
   let moduleName = options.name;
   let display_name = options.display_name;
