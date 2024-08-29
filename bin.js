@@ -48,14 +48,14 @@ async function createModule(){
       name: 'display_name',
       message: 'Enter a display name for the module',
       initial: 'Arkon Module',
-      validate: display_name => display_name.length > 0 ? true : 'Please enter a display name',
+      validate: display_name => display_name.match(/^[a-zA-Z0-9]+[a-zA-Z0-9\s\n]+$/) ? true : 'Please enter a display name',
     },
     'description': {
       type: 'text',
       name: 'description',
       message: 'Enter a description for the module',
       initial: 'This is an arkon module',
-      validate: description => description.length > 0 ? true : 'Please enter a description',
+      validate: description => description.match(/^[a-zA-Z0-9]+[a-zA-Z0-9\s\n]+$/) ? true : 'Please enter a description',
     },
   };
 
